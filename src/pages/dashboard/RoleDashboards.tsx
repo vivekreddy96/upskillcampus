@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Users, GraduationCap, TrendingUp, Award, Shield, Database, ScrollText, BookOpen, ClipboardCheck, Calendar } from 'lucide-react'
+import { Users, GraduationCap, TrendingUp, Award, Shield, Database, ScrollText, BookOpen, ClipboardCheck, Calendar, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -9,6 +9,7 @@ import { PageHeader } from '@/components/ui/PageHeader'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { useAuth } from '@/context/AuthContext'
+import { getRoleExperience } from '@/config/roles'
 import { getStudents } from '@/services/studentService'
 import { getFaculty } from '@/services/facultyService'
 import { getCourses } from '@/services/courseService'
@@ -110,6 +111,7 @@ export function SuperAdminDashboard() {
 }
 
 export function AdminDashboard() {
+  const experience = getRoleExperience('admin')
   const students = getStudents()
   const faculty = getFaculty()
   const attendanceStats = getAttendanceStats()
@@ -128,6 +130,28 @@ export function AdminDashboard() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+      <div className={`rounded-3xl border border-indigo-500/20 bg-gradient-to-r ${experience.accent} p-[1px] shadow-sm`}>
+        <div className="rounded-[calc(1.5rem-1px)] bg-[var(--surface-solid)]/95 p-5">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-sm font-medium text-indigo-600 dark:text-indigo-300">
+                <Sparkles className="h-4 w-4" />
+                {experience.badge} experience
+              </div>
+              <h2 className="text-2xl font-semibold mt-1">{experience.title}</h2>
+              <p className="text-sm text-[var(--text-muted)] mt-1">{experience.description}</p>
+            </div>
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-3 text-sm text-[var(--text-muted)]">
+              <div className="font-medium text-[var(--text)] mb-1">Highlights</div>
+              <ul className="space-y-1 text-xs">
+                {experience.actions.map((action) => (
+                  <li key={action}>• {action}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
       <PageHeader title="Admin Dashboard" description="Campus management overview and reports" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => (
@@ -178,12 +202,35 @@ export function AdminDashboard() {
 
 export function FacultyDashboard() {
   const { user } = useAuth()
+  const experience = getRoleExperience('faculty')
   const courses = getCourses().filter((c) => c.facultyId === user?.facultyId)
   const students = getStudents()
   const announcements = getAnnouncements().filter((a) => a.published !== false).slice(0, 4)
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+      <div className={`rounded-3xl border border-emerald-500/20 bg-gradient-to-r ${experience.accent} p-[1px] shadow-sm`}>
+        <div className="rounded-[calc(1.5rem-1px)] bg-[var(--surface-solid)]/95 p-5">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-sm font-medium text-emerald-600 dark:text-emerald-300">
+                <Sparkles className="h-4 w-4" />
+                {experience.badge} experience
+              </div>
+              <h2 className="text-2xl font-semibold mt-1">{experience.title}</h2>
+              <p className="text-sm text-[var(--text-muted)] mt-1">{experience.description}</p>
+            </div>
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-3 text-sm text-[var(--text-muted)]">
+              <div className="font-medium text-[var(--text)] mb-1">Highlights</div>
+              <ul className="space-y-1 text-xs">
+                {experience.actions.map((action) => (
+                  <li key={action}>• {action}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
       <PageHeader title="Faculty Dashboard" description={`Welcome, ${user?.name}. Manage your courses and students.`} />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card hover>
@@ -249,16 +296,39 @@ export function FacultyDashboard() {
 
 export function StudentDashboard() {
   const { user } = useAuth()
+  const experience = getRoleExperience('student')
   const studentId = user?.studentId ?? ''
   const attendance = getAttendanceByStudent(studentId)
   const results = getResultsByStudent(studentId)
-  const gpa = results.length ? calculateGPA(results.map((r) => r.grade)) : 0
+  const gpa = results.length ? calculateGPA(results.map((r) => ({ grade: r.grade, credits: 3 }))) : 0
   const present = attendance.filter((a) => a.status === 'present').length
   const rate = attendance.length ? Math.round((present / attendance.length) * 100) : 0
   const announcements = getAnnouncements().filter((a) => a.published !== false).slice(0, 3)
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+      <div className={`rounded-3xl border border-amber-500/20 bg-gradient-to-r ${experience.accent} p-[1px] shadow-sm`}>
+        <div className="rounded-[calc(1.5rem-1px)] bg-[var(--surface-solid)]/95 p-5">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-sm font-medium text-amber-600 dark:text-amber-300">
+                <Sparkles className="h-4 w-4" />
+                {experience.badge} experience
+              </div>
+              <h2 className="text-2xl font-semibold mt-1">{experience.title}</h2>
+              <p className="text-sm text-[var(--text-muted)] mt-1">{experience.description}</p>
+            </div>
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-3 text-sm text-[var(--text-muted)]">
+              <div className="font-medium text-[var(--text)] mb-1">Highlights</div>
+              <ul className="space-y-1 text-xs">
+                {experience.actions.map((action) => (
+                  <li key={action}>• {action}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
       <PageHeader title="Student Dashboard" description={`Welcome back, ${user?.name}!`} />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card hover>

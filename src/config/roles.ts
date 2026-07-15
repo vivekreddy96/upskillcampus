@@ -12,6 +12,21 @@ export interface NavItem {
 }
 
 export const ROLE_ROUTES: Record<UserRole, string[]> = {
+  super_admin: [
+    '/',
+    '/students',
+    '/faculty',
+    '/courses',
+    '/attendance',
+    '/results',
+    '/announcements',
+    '/library',
+    '/analytics',
+    '/settings',
+    '/timetable',
+    '/ai-assistant',
+    '/profile',
+  ],
   admin: [
     '/',
     '/students',
@@ -23,9 +38,12 @@ export const ROLE_ROUTES: Record<UserRole, string[]> = {
     '/library',
     '/analytics',
     '/settings',
+    '/timetable',
+    '/ai-assistant',
+    '/profile',
   ],
-  student: ['/', '/profile', '/attendance', '/results', '/courses'],
-  faculty: ['/', '/courses', '/attendance', '/results', '/profile'],
+  student: ['/', '/profile', '/attendance', '/results', '/courses', '/timetable', '/announcements'],
+  faculty: ['/', '/courses', '/attendance', '/results', '/profile', '/timetable', '/announcements'],
 }
 
 const ALL_NAV_ITEMS: NavItem[] = [
@@ -41,6 +59,51 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { to: '/profile', icon: User, label: 'Profile' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ]
+
+export interface RoleExperience {
+  title: string
+  badge: string
+  description: string
+  accent: string
+  actions: string[]
+}
+
+export function getRoleExperience(role: UserRole): RoleExperience {
+  switch (role) {
+    case 'super_admin':
+      return {
+        title: 'Super Admin Command Center',
+        badge: 'Super Admin',
+        description: 'Oversee the full campus ecosystem with strategic controls and live insights.',
+        accent: 'from-violet-500 to-fuchsia-500',
+        actions: ['Manage campus operations', 'Monitor system health', 'Coordinate executive workflows'],
+      }
+    case 'admin':
+      return {
+        title: 'Admin Control Center',
+        badge: 'Admin',
+        description: 'Run day-to-day academic operations with secure, role-based oversight.',
+        accent: 'from-indigo-500 to-purple-500',
+        actions: ['Manage campus operations', 'Review analytics', 'Coordinate academic workflows'],
+      }
+    case 'faculty':
+      return {
+        title: 'Faculty Command Deck',
+        badge: 'Faculty',
+        description: 'Stay focused on teaching, mentorship, and course delivery.',
+        accent: 'from-emerald-500 to-teal-500',
+        actions: ['Manage assigned courses', 'Track attendance', 'Publish results'],
+      }
+    default:
+      return {
+        title: 'Student Experience Hub',
+        badge: 'Student',
+        description: 'Access your courses, attendance, grades, and campus updates effortlessly.',
+        accent: 'from-amber-500 to-orange-500',
+        actions: ['Manage learning progress', 'Review attendance', 'Stay informed'],
+      }
+  }
+}
 
 export function canAccessRoute(role: UserRole, pathname: string): boolean {
   const allowed = ROLE_ROUTES[role]

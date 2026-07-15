@@ -7,6 +7,7 @@ const KEY_MAP: Record<StorageKey, string> = {
   session: `${PREFIX}session`,
   students: `${PREFIX}students`,
   faculty: `${PREFIX}faculty`,
+  departments: `${PREFIX}departments`,
   courses: `${PREFIX}courses`,
   attendance: `${PREFIX}attendance`,
   results: `${PREFIX}results`,
@@ -14,9 +15,11 @@ const KEY_MAP: Record<StorageKey, string> = {
   announcements: `${PREFIX}announcements`,
   library: `${PREFIX}library`,
   activities: `${PREFIX}activities`,
+  auditLogs: `${PREFIX}auditLogs`,
   settings: `${PREFIX}settings`,
   chatHistory: `${PREFIX}chatHistory`,
   seeded: `${PREFIX}seeded`,
+  rbacVersion: `${PREFIX}rbacVersion`,
 }
 
 export function getStorage<T>(key: StorageKey, fallback: T): T {
