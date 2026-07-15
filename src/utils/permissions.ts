@@ -122,7 +122,9 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   { to: '/', label: 'Dashboard', icon: 'LayoutDashboard', permission: 'dashboard.view', end: true },
-  { to: '/students', label: 'Students', icon: 'Users', permission: ['students.view', 'students.view_own'] },
+  // Require full `students.view` permission to see the Students list.
+  // `students.view_own` is only for viewing the logged-in student's own record.
+  { to: '/students', label: 'Students', icon: 'Users', permission: 'students.view' },
   { to: '/faculty', label: 'Faculty', icon: 'GraduationCap', permission: 'faculty.view' },
   { to: '/courses', label: 'Courses', icon: 'BookOpen', permission: ['courses.view', 'courses.view_assigned'] },
   { to: '/departments', label: 'Departments', icon: 'Building', permission: 'departments.view' },
@@ -142,7 +144,8 @@ export const NAV_ITEMS: NavItem[] = [
 
 export const ROUTE_PERMISSIONS: Record<string, Permission | Permission[]> = {
   '/': 'dashboard.view',
-  '/students': ['students.view', 'students.view_own'],
+  // Access to the Students list requires `students.view` (not `students.view_own`).
+  '/students': 'students.view',
   '/faculty': 'faculty.view',
   '/courses': ['courses.view', 'courses.view_assigned'],
   '/departments': 'departments.view',
