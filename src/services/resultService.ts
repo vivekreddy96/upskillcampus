@@ -2,6 +2,8 @@ import { getStorage, setStorage } from './storage'
 import type { Result, Activity } from '@/types'
 import { generateId } from '@/utils/cn'
 import { marksToGrade, calculateTotalMarks } from '@/utils/gpa'
+import { assertPermission } from '@/utils/permissions'
+import * as authService from './authService'
 
 function addActivity(action: string) {
   const activities = getStorage<Activity[]>('activities', [])
@@ -24,6 +26,8 @@ export function getResultsByStudent(studentId: string): Result[] {
 }
 
 export function createResult(data: Omit<Result, 'id' | 'grade'>): Result {
+  const role = authService.getCurrentUser()?.role
+  assertPermission(role, 'results.upload')
   const results = getResults()
   const total = calculateTotalMarks(data.internalMarks, data.externalMarks)
   const result: Result = { ...data, id: generateId(), grade: marksToGrade(total) }
@@ -33,6 +37,8 @@ export function createResult(data: Omit<Result, 'id' | 'grade'>): Result {
 }
 
 export function updateResult(id: string, data: Partial<Result>): Result | null {
+  const role = authService.getCurrentUser()?.role
+  assertPermission(role, 'results.upload')
   const results = getResults()
   const index = results.findIndex((r) => r.id === id)
   if (index === -1) return null
@@ -47,6 +53,8 @@ export function updateResult(id: string, data: Partial<Result>): Result | null {
 }
 
 export function deleteResult(id: string): boolean {
+  const role = authService.getCurrentUser()?.role
+  assertPermission(role, 'results.upload')
   const results = getResults()
   if (!results.find((r) => r.id === id)) return false
   setStorage('results', results.filter((r) => r.id !== id))

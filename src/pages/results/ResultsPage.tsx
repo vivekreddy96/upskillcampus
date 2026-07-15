@@ -12,6 +12,7 @@ import { Select } from '@/components/ui/Select'
 import { Modal } from '@/components/ui/Modal'
 import { Badge } from '@/components/ui/Badge'
 import { useToast } from '@/context/ToastContext'
+import { usePermissions } from '@/hooks/usePermissions'
 import { getResults, createResult, deleteResult } from '@/services/resultService'
 import { getStudents } from '@/services/studentService'
 import { getCourses } from '@/services/courseService'
@@ -36,6 +37,7 @@ export default function ResultsPage() {
   const { toast } = useToast()
   const students = getStudents()
   const courses = getCourses()
+  const { can } = usePermissions()
 
   const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -76,7 +78,7 @@ export default function ResultsPage() {
       <PageHeader
         title="Results & Grades"
         description="Manage internal and external marks, calculate grades and GPA"
-        actions={<Button onClick={() => { reset(); setModalOpen(true) }}><Plus className="h-4 w-4" /> Add Result</Button>}
+        actions={can('results.upload') ? <Button onClick={() => { reset(); setModalOpen(true) }}><Plus className="h-4 w-4" /> Add Result</Button> : null}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -157,7 +159,9 @@ export default function ResultsPage() {
                     <td className="px-4 py-3 text-sm font-semibold">{total}</td>
                     <td className="px-4 py-3"><Badge variant={gradeColor(r.grade) as 'success'}>{r.grade}</Badge></td>
                     <td className="px-4 py-3">
-                      <Button variant="ghost" size="sm" onClick={() => { deleteResult(r.id); refresh(); toast('Deleted', 'success') }}>Delete</Button>
+                      {can('results.upload') && (
+                        <Button variant="ghost" size="sm" onClick={() => { deleteResult(r.id); refresh(); toast('Deleted', 'success') }}>Delete</Button>
+                      )}
                     </td>
                   </tr>
                 )

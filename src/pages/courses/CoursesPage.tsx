@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Modal } from '@/components/ui/Modal'
 import { useToast } from '@/context/ToastContext'
+import { usePermissions } from '@/hooks/usePermissions'
 import { getCourses, createCourse, updateCourse, deleteCourse } from '@/services/courseService'
 import { getFaculty } from '@/services/facultyService'
 import type { Course } from '@/types'
@@ -36,6 +37,7 @@ export default function CoursesPage() {
   const [editing, setEditing] = useState<Course | null>(null)
   const { toast } = useToast()
   const faculty = getFaculty()
+  const { can } = usePermissions()
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -75,7 +77,7 @@ export default function CoursesPage() {
       <PageHeader
         title="Course Management"
         description="Manage courses, credits, and faculty assignments"
-        actions={<Button onClick={openAdd}><Plus className="h-4 w-4" /> Add Course</Button>}
+        actions={can('courses.create') ? <Button onClick={openAdd}><Plus className="h-4 w-4" /> Add Course</Button> : null}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -87,10 +89,12 @@ export default function CoursesPage() {
                   <BookOpen className="h-5 w-5 text-indigo-500" />
                 </div>
                 <div className="flex gap-1">
-                  <Button variant="ghost" size="icon" onClick={() => openEdit(c)}><Pencil className="h-4 w-4" /></Button>
-                  <Button variant="ghost" size="icon" onClick={() => { deleteCourse(c.id); refresh(); toast('Course deleted', 'success') }}>
-                    <Trash2 className="h-4 w-4 text-red-500" />
-                  </Button>
+                  {can('courses.edit') && <Button variant="ghost" size="icon" onClick={() => openEdit(c)}><Pencil className="h-4 w-4" /></Button>}
+                  {can('courses.delete') && (
+                    <Button variant="ghost" size="icon" onClick={() => { deleteCourse(c.id); refresh(); toast('Course deleted', 'success') }}>
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  )}
                 </div>
               </div>
               <Badge variant="info">{c.code}</Badge>

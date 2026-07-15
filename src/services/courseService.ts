@@ -1,6 +1,8 @@
 import { getStorage, setStorage } from './storage'
 import type { Course, Activity } from '@/types'
 import { generateId } from '@/utils/cn'
+import { assertPermission } from '@/utils/permissions'
+import * as authService from './authService'
 
 function addActivity(action: string) {
   const activities = getStorage<Activity[]>('activities', [])
@@ -23,6 +25,8 @@ export function getCourse(id: string): Course | undefined {
 }
 
 export function createCourse(data: Omit<Course, 'id'>): Course {
+  const role = authService.getCurrentUser()?.role
+  assertPermission(role, 'courses.create')
   const courses = getCourses()
   const course: Course = { ...data, id: generateId() }
   setStorage('courses', [...courses, course])
@@ -31,6 +35,8 @@ export function createCourse(data: Omit<Course, 'id'>): Course {
 }
 
 export function updateCourse(id: string, data: Partial<Course>): Course | null {
+  const role = authService.getCurrentUser()?.role
+  assertPermission(role, 'courses.edit')
   const courses = getCourses()
   const index = courses.findIndex((c) => c.id === id)
   if (index === -1) return null
@@ -40,6 +46,8 @@ export function updateCourse(id: string, data: Partial<Course>): Course | null {
 }
 
 export function deleteCourse(id: string): boolean {
+  const role = authService.getCurrentUser()?.role
+  assertPermission(role, 'courses.delete')
   const courses = getCourses()
   const course = courses.find((c) => c.id === id)
   if (!course) return false

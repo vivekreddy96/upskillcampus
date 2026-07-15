@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Modal } from '@/components/ui/Modal'
 import { useToast } from '@/context/ToastContext'
+import { usePermissions } from '@/hooks/usePermissions'
 import { getAnnouncements, createAnnouncement, deleteAnnouncement } from '@/services/announcementService'
 import { formatDate } from '@/utils/cn'
 import type { Announcement } from '@/types'
@@ -34,6 +35,7 @@ export default function AnnouncementsPage() {
   const [filter, setFilter] = useState<'all' | Announcement['type']>('all')
   const [modalOpen, setModalOpen] = useState(false)
   const { toast } = useToast()
+  const { can } = usePermissions()
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -56,7 +58,7 @@ export default function AnnouncementsPage() {
       <PageHeader
         title="Announcements"
         description="Notices, events, and important updates"
-        actions={<Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4" /> New Announcement</Button>}
+        actions={can('announcements.create') ? <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4" /> New Announcement</Button> : null}
       />
 
       <div className="flex gap-2 mb-6">
@@ -89,9 +91,11 @@ export default function AnnouncementsPage() {
                       <span>By {a.author}</span>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => { deleteAnnouncement(a.id); refresh(); toast('Deleted', 'success') }}>
-                    Delete
-                  </Button>
+                  {can('announcements.delete') && (
+                    <Button variant="ghost" size="sm" onClick={() => { deleteAnnouncement(a.id); refresh(); toast('Deleted', 'success') }}>
+                      Delete
+                    </Button>
+                  )}
                 </div>
               </Card>
             </motion.div>
