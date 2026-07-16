@@ -13,7 +13,8 @@ import { Modal } from '@/components/ui/Modal'
 import { Badge } from '@/components/ui/Badge'
 import { useToast } from '@/context/ToastContext'
 import { usePermissions } from '@/hooks/usePermissions'
-import { getResults, createResult, deleteResult } from '@/services/resultService'
+import { useAuth } from '@/context/AuthContext'
+import { getResults, getResultsByStudent, createResult, deleteResult } from '@/services/resultService'
 import { getStudents } from '@/services/studentService'
 import { getCourses } from '@/services/courseService'
 import { calculateTotalMarks, marksToGrade, calculateGPA } from '@/utils/gpa'
@@ -29,7 +30,10 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 export default function ResultsPage() {
-  const [results, setResults] = useState(getResults())
+  const { can } = usePermissions()
+  const { user } = useAuth()
+
+  const [results, setResults] = useState(() => (can('results.view') ? getResults() : getResultsByStudent(user?.studentId ?? '')))
   const [modalOpen, setModalOpen] = useState(false)
   const [calcInternal, setCalcInternal] = useState(30)
   const [calcExternal, setCalcExternal] = useState(60)
@@ -37,14 +41,13 @@ export default function ResultsPage() {
   const { toast } = useToast()
   const students = getStudents()
   const courses = getCourses()
-  const { can } = usePermissions()
 
   const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { internalMarks: 30, externalMarks: 60, semester: 1 },
   })
 
-  const refresh = () => setResults(getResults())
+  const refresh = () => setResults(can('results.view') ? getResults() : getResultsByStudent(user?.studentId ?? ''))
 
   const watchedInternal = watch('internalMarks') || 0
   const watchedExternal = watch('externalMarks') || 0
