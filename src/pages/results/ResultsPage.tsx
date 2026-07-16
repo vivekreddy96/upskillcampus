@@ -84,6 +84,12 @@ export default function ResultsPage() {
         actions={can('results.upload') ? <Button onClick={() => { reset(); setModalOpen(true) }}><Plus className="h-4 w-4" /> Add Result</Button> : null}
       />
 
+      {!can('results.view') && (
+        <div role="alert" className="p-3 rounded-xl border border-red-200 bg-red-50 text-sm text-red-700">
+          You do not have permission to view all students' results — showing only your own results.
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <div className="flex items-center gap-2 mb-4">
