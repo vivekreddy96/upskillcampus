@@ -21,7 +21,7 @@ export default function UnauthorizedPage() {
         <h2 className="text-xl font-semibold mb-2">Access Denied</h2>
         <p className="text-[var(--text-muted)] mb-8">
           {user
-            ? `Your role (${user.role.replace('_', ' ')}) does not have permission to access this page.`
+            ? `Your role (${user.role.replace('_', ' ')}) does not have permission to access this page. Ask an administrator to grant the necessary access.`
             : 'You need to sign in to access this page.'}
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">

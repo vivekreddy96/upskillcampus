@@ -17,7 +17,7 @@ export function DashboardLayout() {
   useInactivityLogout(true)
 
   return (
-    <div className="min-h-screen bg-[var(--bg)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.14),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(236,72,153,0.12),_transparent_25%),var(--bg)]">
       <Sidebar
         open={sidebarOpen}
         collapsed={collapsed}

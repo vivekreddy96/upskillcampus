@@ -21,6 +21,8 @@ import SettingsPage from '@/pages/settings/SettingsPage'
 import LoginPage from '@/pages/auth/LoginPage'
 import RegisterPage from '@/pages/auth/RegisterPage'
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage'
+import LandingPage from '@/pages/marketing/LandingPage'
+import UnauthorizedPage from '@/pages/errors/UnauthorizedPage'
 
 export default function App() {
   return (
@@ -29,6 +31,7 @@ export default function App() {
         <AuthProvider>
           <Routes>
             <Route element={<GuestRoute />}>
+              <Route path="/" element={<LandingPage />} />
               <Route element={<AuthLayout />}>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
@@ -53,6 +56,7 @@ export default function App() {
               </Route>
             </Route>
 
+            <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </AuthProvider>
